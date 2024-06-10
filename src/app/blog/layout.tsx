@@ -5,7 +5,7 @@ export default function BlogLayout({
 }) {
   return (
     <div className="min-h-screen bg-white">
-      <div className="h-[200px] w-[200px] flex justify-center items-center bg-gray-400">
+      <div className="py-4 px-2 max-w-[50vw] flex justify-center items-center bg-gray-400">
         {children}
       </div>
     </div>
