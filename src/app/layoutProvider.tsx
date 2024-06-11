@@ -1,6 +1,5 @@
 "use client";
 
-import { getAuthenState } from "@/utils/localStorage";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -20,18 +19,21 @@ export const LayoutProvider = ({
   children: React.ReactNode;
 }>) => {
   const pathname = usePathname();
-  const isAuthenticated = localStorage.getItem("isConnected");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [isAuthen, setIsAuthen] = useState(false);
+
   useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isConnected");
     setLoading(true);
+    setIsAuthen(isAuthenticated === "true" || false);
     if (!isAuthenticated && protectedRoutes.includes(pathname)) {
       router.push("/login");
     } else if (isAuthenticated && pathname === "/login") {
       router.push("/");
     }
     setLoading(false);
-  }, [pathname, isAuthenticated, router]);
+  }, [pathname, router]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -39,7 +41,7 @@ export const LayoutProvider = ({
 
   return (
     <>
-      {isAuthenticated && (
+      {isAuthen && (
         <nav className="w-full bg-black flex px-5 space-x-5 py-3 text-white">
           <Link href={"/"}>Home</Link>
           <div className="group relative">
