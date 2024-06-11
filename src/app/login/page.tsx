@@ -1,21 +1,20 @@
 "use client";
-
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAccount, useConnect } from "wagmi";
+import { useAccount, useEnsName } from "wagmi";
 
-export default function Home() {
-  const { isConnected, address } = useAccount();
-  const [loading, setLoading] = useState(false);
+export default function Login() {
+  const { isConnected } = useAccount();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
     if (isConnected) {
       localStorage.setItem("isConnected", "true");
+      router.push("/");
     } else {
       localStorage.removeItem("isConnected");
-      router.push("/login");
     }
     setLoading(false);
   }, [isConnected, router]);
@@ -25,9 +24,8 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-white px-3 py-5 flex flex-col space-y-3">
-      <h1 className="text-black font-bold text-2xl">Home</h1>
-      <p className="text-gray-500">Address: {address}</p>
+    <main className="min-h-screen bg-white flex flex-col py-10 space-y-5 items-center">
+      <h1 className="text-black">Connect to MetaMask to log in</h1>
       <ConnectButton />
     </main>
   );
