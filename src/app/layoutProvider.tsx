@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useDisconnect } from "wagmi";
 
 const protectedRoutes = [
   "/",
@@ -22,18 +23,24 @@ export const LayoutProvider = ({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isAuthen, setIsAuthen] = useState(false);
+  const { disconnect } = useDisconnect();
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("isConnected");
+    const isAuthenticated = localStorage.getItem("isConnected") || false;
+    const token = localStorage.getItem("token");
     setLoading(true);
     setIsAuthen(isAuthenticated === "true" || false);
-    if (!isAuthenticated && protectedRoutes.includes(pathname)) {
+    console.log("isAuthenticated", isAuthenticated);
+    if ((!isAuthenticated || !token) && protectedRoutes.includes(pathname)) {
+      disconnect();
+      localStorage.removeItem("isConnected");
+      localStorage.removeItem("token");
       router.push("/login");
-    } else if (isAuthenticated && pathname === "/login") {
+    } else if (isAuthenticated && token && pathname === "/login") {
       router.push("/");
     }
     setLoading(false);
-  }, [pathname, router]);
+  }, [pathname, router, disconnect]);
 
   if (loading) {
     return <div>Loading...</div>;

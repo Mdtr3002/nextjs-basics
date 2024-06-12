@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   useAccount,
   useBalance,
@@ -24,17 +23,30 @@ export default function Home() {
   const { disconnect } = useDisconnect();
   const { data: ensName } = useEnsName({ address });
   const [currentChain, setCurrentChain] = useState(chain?.name);
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState("");
+
   useEffect(() => {
-    setLoading(true);
-    if (isConnected) {
-      localStorage.setItem("isConnected", "true");
-    } else {
-      localStorage.removeItem("isConnected");
-      router.push("/login");
+    const curToken = localStorage.getItem("token");
+    if (curToken) {
+      setToken(curToken);
     }
-    setLoading(false);
-  }, [isConnected, router]);
+    if (chain) {
+      setCurrentChain(chain.name);
+    }
+  }, [chain]);
+
+  // useEffect(() => {
+  //   setLoading(true);
+  //   if (address) {
+  //     console.log("connected");
+  //     localStorage.setItem("isConnected", "true");
+  //   } else if (!address) {
+  //     console.log("not connected");
+  //     localStorage.removeItem("isConnected");
+  //     router.push("/login");
+  //   }
+  //   setLoading(false);
+  // }, [address, router]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -98,7 +110,12 @@ export default function Home() {
         </div>
         <button
           className="bg-[#4285f4] text-white px-2 py-1 rounded-lg w-fit font-medium mt-5 hover:bg-[#4285f4]/80"
-          onClick={() => disconnect()}
+          onClick={() => {
+            localStorage.removeItem("isConnected");
+            localStorage.removeItem("token");
+            disconnect();
+            router.push("/login");
+          }}
         >
           Disconnect
         </button>

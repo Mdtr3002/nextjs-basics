@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 import { ConnectBtn } from "../components/connectButton";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
@@ -8,19 +8,26 @@ import { signMsgService } from "@/services/sign.service";
 import { SignInProps } from "@/types";
 
 export default function Login() {
-  const { isConnected, address, chainId } = useAccount();
+  const { isConnected, address, chainId, status } = useAccount();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [nonce, setNonce] = useState("");
-  const [curAddress, setCurAddress] = useState("");
+  const [curAddress, setCurAddress] = useState<string>("");
   const { openConnectModal } = useConnectModal();
-  const { disconnect } = useDisconnect();
+  const { disconnect } = useDisconnect({
+    mutation: {
+      onSuccess: () => {
+        console.log("disconnected", address);
+      },
+    },
+  });
   const { data, signMessageAsync } = useSignMessage({
     mutation: {
       onError: () => {
-        disconnect();
         localStorage.removeItem("isConnected");
         localStorage.removeItem("token");
+        setCurAddress("");
+        disconnect();
       },
     },
   });
@@ -28,12 +35,10 @@ export default function Login() {
   useEffect(() => {
     setLoading(true);
     const isAuthen = localStorage.getItem("isConnected");
-    console.log("aa");
-    if (isAuthen) {
-      console.log("here");
-      router.push("/");
-    }
-    if (isConnected) {
+    const token = localStorage.getItem("token");
+    console.log("here", status);
+    if (address && status === 'connected' && !isAuthen && !token) {
+      console.log("here2");
       signMsgService
         .getSignMsg()
         .then(async (res) => {
@@ -44,22 +49,20 @@ export default function Login() {
           });
         })
         .catch((err) => {
-          console.log(err);
           localStorage.removeItem("isConnected");
         });
-    } else {
-      localStorage.removeItem("isConnected");
     }
     setLoading(false);
-  }, [isConnected, router, signMessageAsync, chainId, address]);
+  }, [address]);
 
   useEffect(() => {
     if (data) {
+      console.log("here");
       const signData: SignInProps = {
         public_address: curAddress,
         signature: data.toString(),
         nonce: nonce,
-        chain_id: chainId || 1,
+        chain_id: 1,
       };
       signMsgService
         .signIn(signData)
