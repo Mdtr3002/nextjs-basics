@@ -7,7 +7,6 @@ const MetaMaskOptions = {
     name: "nextjs-basics",
   },
   infuraAPIKey: "7d64820b87974b35b8a5cea853e23fd9",
-  // Other options.
 };
 
 export const config = createConfig({

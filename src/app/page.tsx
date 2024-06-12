@@ -24,6 +24,7 @@ export default function Home() {
   const { disconnect } = useDisconnect();
   const { data: ensName } = useEnsName({ address });
   const [currentChain, setCurrentChain] = useState(chain?.name);
+  const token = localStorage.getItem("token");
   useEffect(() => {
     setLoading(true);
     if (isConnected) {
@@ -42,7 +43,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white px-3 py-5 flex flex-col space-y-3">
       <h1 className="text-black font-bold text-2xl">Home</h1>
-      <div className="bg-white shadow-lg rounded-xl p-4 w-fit flex flex-col">
+      <div className="bg-white shadow-lg rounded-xl p-4 w-fit max-w-full flex flex-col">
         <p className="text-gray-500">
           <b>Adress:</b> {ensName ? `${ensName} (${address})` : address}
         </p>
@@ -60,6 +61,12 @@ export default function Home() {
               {data?.symbol}
             </p>
           )}
+        </div>
+        <div className="flex flex-col text-gray-500">
+          <p>
+            <b>Access token:</b>
+          </p>
+          <p className="break-all p-2 bg-gray-100 rounded-lg">{token || ""}</p>
         </div>
         <div className="relative inline-block mt-2">
           <button

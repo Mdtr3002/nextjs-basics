@@ -1,7 +1,6 @@
 "use client";
 
 import { State, WagmiProvider } from "wagmi";
-// import { config } from "../../config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import {
