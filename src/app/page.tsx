@@ -35,19 +35,6 @@ export default function Home() {
     }
   }, [chain]);
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   if (address) {
-  //     console.log("connected");
-  //     localStorage.setItem("isConnected", "true");
-  //   } else if (!address) {
-  //     console.log("not connected");
-  //     localStorage.removeItem("isConnected");
-  //     router.push("/login");
-  //   }
-  //   setLoading(false);
-  // }, [address, router]);
-
   if (loading) {
     return <div>Loading...</div>;
   }

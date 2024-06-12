@@ -8,19 +8,13 @@ import { signMsgService } from "@/services/sign.service";
 import { SignInProps } from "@/types";
 
 export default function Login() {
-  const { isConnected, address, chainId, status } = useAccount();
+  const { address, chainId, status } = useAccount();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [nonce, setNonce] = useState("");
   const [curAddress, setCurAddress] = useState<string>("");
   const { openConnectModal } = useConnectModal();
-  const { disconnect } = useDisconnect({
-    mutation: {
-      onSuccess: () => {
-        console.log("disconnected", address);
-      },
-    },
-  });
+  const { disconnect } = useDisconnect();
   const { data, signMessageAsync } = useSignMessage({
     mutation: {
       onError: () => {
@@ -36,9 +30,7 @@ export default function Login() {
     setLoading(true);
     const isAuthen = localStorage.getItem("isConnected");
     const token = localStorage.getItem("token");
-    console.log("here", status);
-    if (address && status === 'connected' && !isAuthen && !token) {
-      console.log("here2");
+    if (address && status === "connected" && !isAuthen && !token) {
       signMsgService
         .getSignMsg()
         .then(async (res) => {
@@ -57,7 +49,6 @@ export default function Login() {
 
   useEffect(() => {
     if (data) {
-      console.log("here");
       const signData: SignInProps = {
         public_address: curAddress,
         signature: data.toString(),

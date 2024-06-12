@@ -30,7 +30,6 @@ export const LayoutProvider = ({
     const token = localStorage.getItem("token");
     setLoading(true);
     setIsAuthen(isAuthenticated === "true" || false);
-    console.log("isAuthenticated", isAuthenticated);
     if ((!isAuthenticated || !token) && protectedRoutes.includes(pathname)) {
       disconnect();
       localStorage.removeItem("isConnected");
